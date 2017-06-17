@@ -8,6 +8,8 @@ var weather = require("weather-js");
 
 //Require schema
 var Address=require("./models/address")
+var addressRoute = require('./routes/addressRoutes')
+var htmlRoute = require('./routes/htmlRoutes')
 
 // Express app
 var app = express();
@@ -40,53 +42,11 @@ db.once("open", function() {
 // -------------------------------------------------
 
 // Main "/" Route. This will redirect the user to our rendered React application
-app.get("/", function(req, res) {
-  res.sendFile(__dirname + "/public/index.html");
-});
 
-// This is the route we will send GET requests to retrieve our most recent address data.
-// We will call this route the moment our page gets rendered
-app.get("/api", function(req, res) {
+app.use('/address', addressRoute);
+app.use('/', htmlRoute);
 
-  // This GET request will search for the latest Address
-  Address.find({}).exec(function(err, doc) {
 
-    if (err) {
-      console.log(err);
-    }
-    else {
-      res.send(doc);
-    }
-  });
-});
-
-// This is the route we will send POST requests to save each address.
-// We will call this route the moment the "click" or "reset" button is pressed.
-app.post("/api", function(req, res) {
-
-  var addressID = req.body.addressID;
-  var searchTerm = parseInt(req.body.searchTerm);
-  var results = parseInt(req.body.results);
-
-  // Note how this route utilizes the findOneAndUpdate function to update the clickCount
-  // { upsert: true } is an optional object we can pass into the findOneAndUpdate method
-  // If included, Mongoose will create a new document matching the description if one is not found
-  Address.findOneAndUpdate({
-    searchTerm: searchTerm
-  }, {
-    $set: {
-      results: results
-    }
-  }, { upsert: true }).exec(function(err) {
-
-    if (err) {
-      console.log(err);
-    }
-    else {
-      res.send("Successful search");
-    }
-  });
-});
 
 // -------------------------------------------------
 
