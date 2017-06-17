@@ -6,8 +6,6 @@ var mongoose = require("mongoose");
 var geocode = require("geocoder");
 var weather = require("weather-js");
 
-//Require schema
-var Address=require("./models/address")
 var addressRoute = require('./routes/addressRoutes')
 var htmlRoute = require('./routes/htmlRoutes')
 
